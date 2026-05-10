@@ -100,4 +100,12 @@ export interface MockServerOptions {
   fixturePersonalNumber?: string;
   /** Override name returned in completionData. */
   fixtureName?: string;
+  /** Maximum JSON request body size accepted by the server. Default: "100kb". */
+  jsonBodyLimit?: string;
+  /**
+   * If set, orders older than this many milliseconds are evicted when a new
+   * order is created. Useful for long-running mock processes in CI to avoid
+   * unbounded memory growth. Default: undefined (no eviction).
+   */
+  orderTtlMs?: number;
 }

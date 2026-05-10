@@ -1,4 +1,4 @@
-export { createMockServer } from "./server";
+export { createMockServer, SCENARIO_HEADER } from "./server";
 export type { MockServer } from "./server";
 export { OrderStore } from "./store";
 export { generateAnimatedQr } from "./qr";

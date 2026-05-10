@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import request from "supertest";
-import { createMockServer, type MockServer } from "../src";
+import { createMockServer, SCENARIO_HEADER, type MockServer } from "../src";
 import { generateAnimatedQr } from "../src/qr";
 
 describe("bankid-mock server", () => {
@@ -149,6 +149,51 @@ describe("bankid-mock server", () => {
         .send({ orderRef: "nonexistent" });
       expect(res.status).toBe(404);
     });
+  });
+});
+
+describe("SCENARIO_HEADER constant", () => {
+  it("is exported as 'x-mock-scenario'", () => {
+    expect(SCENARIO_HEADER).toBe("x-mock-scenario");
+  });
+
+  it("is honored when used to set the per-request scenario", async () => {
+    const mock = createMockServer({ pollsUntilResolved: 1 });
+    const auth = await request(mock.app)
+      .post("/rp/v6.0/auth")
+      .set(SCENARIO_HEADER, "userCancel")
+      .send({ endUserIp: "1.2.3.4" });
+
+    const final = await request(mock.app)
+      .post("/rp/v6.0/collect")
+      .send({ orderRef: auth.body.orderRef });
+
+    expect(final.body.status).toBe("failed");
+    expect(final.body.hintCode).toBe("userCancel");
+  });
+});
+
+describe("payload size limit", () => {
+  it("rejects requests larger than the configured jsonBodyLimit", async () => {
+    const small = createMockServer({ jsonBodyLimit: "1kb" });
+    const oversized = "x".repeat(2000);
+
+    const res = await request(small.app)
+      .post("/rp/v6.0/auth")
+      .set("Content-Type", "application/json")
+      .send({ endUserIp: "1.2.3.4", userVisibleData: oversized });
+
+    expect(res.status).toBe(413);
+  });
+
+  it("accepts requests within the limit", async () => {
+    const small = createMockServer({ jsonBodyLimit: "1kb" });
+
+    const res = await request(small.app)
+      .post("/rp/v6.0/auth")
+      .send({ endUserIp: "1.2.3.4" });
+
+    expect(res.status).toBe(200);
   });
 });
 

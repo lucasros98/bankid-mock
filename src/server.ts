@@ -10,12 +10,21 @@ import type {
   SignRequest,
 } from "./types";
 
-const DEFAULT_OPTIONS: Required<MockServerOptions> = {
-  defaultScenario: "success",
+/**
+ * Per-request HTTP header used to override the default scenario for a single
+ * order. Allows the same mock instance to serve many test cases concurrently.
+ * @example
+ *   await fetch(url, { headers: { [SCENARIO_HEADER]: "userCancel" }, ... })
+ */
+export const SCENARIO_HEADER = "x-mock-scenario";
+
+const DEFAULT_OPTIONS = {
+  defaultScenario: "success" as const,
   pollsUntilResolved: 3,
   fixturePersonalNumber: "199001011234",
   fixtureName: "Test Testsson",
-};
+  jsonBodyLimit: "100kb",
+} satisfies Omit<MockServerOptions, "orderTtlMs">;
 
 export interface MockServer {
   app: Express;
@@ -24,10 +33,10 @@ export interface MockServer {
 
 export function createMockServer(options: MockServerOptions = {}): MockServer {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-  const store = new OrderStore();
+  const store = new OrderStore({ orderTtlMs: opts.orderTtlMs });
   const app = express();
 
-  app.use(express.json());
+  app.use(express.json({ limit: opts.jsonBodyLimit }));
 
   app.post("/rp/v6.0/auth", (req: Request, res: Response) => {
     handleAuthOrSign(req, res, "auth");
@@ -72,7 +81,7 @@ export function createMockServer(options: MockServerOptions = {}): MockServer {
       return sendError(res, 400, "invalidParameters", "Missing required field: userVisibleData");
     }
 
-    const headerScenario = req.header("x-mock-scenario");
+    const headerScenario = req.header(SCENARIO_HEADER);
     const scenario = pickScenario(opts.defaultScenario, headerScenario);
 
     const order = store.create({

@@ -1,14 +1,28 @@
 import { randomUUID, randomBytes } from "node:crypto";
 import type { MockOrder, Scenario } from "./types";
 
+export interface OrderStoreOptions {
+  /**
+   * If set, orders older than this many milliseconds are evicted on the
+   * next call to `create`. Default: undefined (no eviction).
+   */
+  orderTtlMs?: number;
+}
+
 export class OrderStore {
   private orders = new Map<string, MockOrder>();
+  private readonly orderTtlMs?: number;
+
+  constructor(options: OrderStoreOptions = {}) {
+    this.orderTtlMs = options.orderTtlMs;
+  }
 
   create(opts: {
     scenario: Scenario;
     endUserIp: string;
     requestedPersonalNumber?: string;
   }): MockOrder {
+    this.evictExpired();
     const order: MockOrder = {
       orderRef: randomUUID(),
       autoStartToken: randomUUID(),
@@ -54,5 +68,15 @@ export class OrderStore {
 
   size(): number {
     return this.orders.size;
+  }
+
+  private evictExpired(): void {
+    if (this.orderTtlMs === undefined) return;
+    const cutoff = Date.now() - this.orderTtlMs;
+    for (const [orderRef, order] of this.orders) {
+      if (order.createdAt < cutoff) {
+        this.orders.delete(orderRef);
+      }
+    }
   }
 }
