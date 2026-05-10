@@ -1,5 +1,5 @@
 {
-  "name": "@lucasros/bankid-mock",
+  "name": "@lucasros98/bankid-mock",
   "version": "0.1.0",
   "description": "Drop-in mock server for the Swedish BankID v6 API. Runs locally with no certificates, supports configurable scenarios, animated QR, and is suitable for CI and local development.",
   "keywords": [

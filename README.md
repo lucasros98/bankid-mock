@@ -1,10 +1,10 @@
-# @lucasros/bankid-mock
+# @lucasros98/bankid-mock
 
 [![CI](https://github.com/lucasros98/bankid-mock/actions/workflows/ci.yml/badge.svg)](https://github.com/lucasros98/bankid-mock/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@lucasros/bankid-mock.svg)](https://www.npmjs.com/package/@lucasros/bankid-mock)
+[![npm version](https://img.shields.io/npm/v/@lucasros98/bankid-mock.svg)](https://www.npmjs.com/package/@lucasros98/bankid-mock)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](tsconfig.json)
-[![Node](https://img.shields.io/node/v/@lucasros/bankid-mock.svg)](package.json)
+[![Node](https://img.shields.io/node/v/@lucasros98/bankid-mock.svg)](package.json)
 
 A drop-in mock server for the Swedish **BankID v6 API**. Runs locally with no
 certificates, supports configurable scenarios, animated QR, and is suitable
@@ -35,7 +35,7 @@ realistic responses.
 ## Install
 
 ```bash
-npm install --save-dev @lucasros/bankid-mock
+npm install --save-dev @lucasros98/bankid-mock
 ```
 
 ## Quickstart — CLI
@@ -65,7 +65,7 @@ POST /rp/v6.0/cancel
 ## Quickstart — programmatic
 
 ```ts
-import { createMockServer } from "@lucasros/bankid-mock";
+import { createMockServer } from "@lucasros98/bankid-mock";
 
 const { app } = createMockServer({
   defaultScenario: "success",
@@ -134,7 +134,7 @@ spec. The `generateAnimatedQr` helper is exported so tests can compute the
 expected QR string for a given second:
 
 ```ts
-import { generateAnimatedQr } from "@lucasros/bankid-mock";
+import { generateAnimatedQr } from "@lucasros98/bankid-mock";
 
 const qr = generateAnimatedQr(qrStartToken, qrStartSecret, 0);
 // "bankid.<token>.0.<HMAC-SHA256(secret, "0")>"
