@@ -54,6 +54,9 @@
   "engines": {
     "node": ">=18"
   },
+  "overrides": {
+    "rollup": "^4.40.0"
+  },
   "license": "MIT",
   "author": "Lucas Rosvall <lucasrosvall@gmail.com>",
   "repository": {

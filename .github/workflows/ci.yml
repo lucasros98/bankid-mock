@@ -25,11 +25,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        # Use `npm install` instead of `npm ci` because npm has a known bug
-        # with platform-specific optional dependencies in package-lock.json
-        # (rollup, esbuild, etc.) when the lockfile was generated on a
-        # different OS. See https://github.com/npm/cli/issues/4828.
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Typecheck
         run: npm run typecheck
