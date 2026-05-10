@@ -1,5 +1,11 @@
 # @lucasros/bankid-mock
 
+[![CI](https://github.com/lucasros98/bankid-mock/actions/workflows/ci.yml/badge.svg)](https://github.com/lucasros98/bankid-mock/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@lucasros/bankid-mock.svg)](https://www.npmjs.com/package/@lucasros/bankid-mock)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](tsconfig.json)
+[![Node](https://img.shields.io/node/v/@lucasros/bankid-mock.svg)](package.json)
+
 A drop-in mock server for the Swedish **BankID v6 API**. Runs locally with no
 certificates, supports configurable scenarios, animated QR, and is suitable
 for CI and local development.
