@@ -1,3 +1,5 @@
+import type { Scenario } from "./types";
+
 export interface CliFlags {
   wantsHelp: boolean;
   wantsVersion: boolean;
@@ -8,6 +10,46 @@ export function parseCliArgs(args: string[]): CliFlags {
     wantsHelp: args.includes("--help") || args.includes("-h"),
     wantsVersion: args.includes("--version") || args.includes("-v"),
   };
+}
+
+export function parsePort(value: string | undefined, fallback: number, name: string): number {
+  if (value === undefined) return fallback;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 0 || n > 65535) {
+    throw new Error(`Invalid ${name}: "${value}" — expected integer in [0, 65535]`);
+  }
+  return n;
+}
+
+export function parsePositiveInt<F extends number | undefined>(
+  value: string | undefined,
+  fallback: F,
+  name: string,
+): number | F {
+  if (value === undefined) return fallback;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 1) {
+    throw new Error(`Invalid ${name}: "${value}" — expected positive integer`);
+  }
+  return n;
+}
+
+const VALID_SCENARIOS: Scenario[] = [
+  "success",
+  "userCancel",
+  "expiredTransaction",
+  "certificateErr",
+  "startFailed",
+];
+
+export function parseScenario(value: string | undefined, fallback: Scenario): Scenario {
+  if (value === undefined) return fallback;
+  if ((VALID_SCENARIOS as string[]).includes(value)) {
+    return value as Scenario;
+  }
+  throw new Error(
+    `Invalid scenario: "${value}" — expected one of ${VALID_SCENARIOS.join(", ")}`,
+  );
 }
 
 export function renderHelp(): string {

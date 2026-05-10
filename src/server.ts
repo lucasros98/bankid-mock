@@ -1,4 +1,9 @@
-import express, { type Express, type Request, type Response } from "express";
+import express, {
+  type Express,
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import { OrderStore } from "./store";
 import { pickScenario, resolveCollect } from "./scenarios";
 import type {
@@ -103,6 +108,13 @@ export function createMockServer(options: MockServerOptions = {}): MockServer {
     const body: ErrorResponse = { errorCode, details };
     res.status(status).json(body);
   }
+
+  app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
+    if (err && typeof err === "object" && "type" in err && err.type === "entity.too.large") {
+      return sendError(res, 413, "invalidParameters", "Request payload too large");
+    }
+    next(err);
+  });
 
   return { app, store };
 }

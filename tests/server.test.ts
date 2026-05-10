@@ -184,6 +184,8 @@ describe("payload size limit", () => {
       .send({ endUserIp: "1.2.3.4", userVisibleData: oversized });
 
     expect(res.status).toBe(413);
+    expect(res.body.errorCode).toBe("invalidParameters");
+    expect(res.body.details).toEqual(expect.any(String));
   });
 
   it("accepts requests within the limit", async () => {

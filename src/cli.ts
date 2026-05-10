@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 import { createMockServer } from "./server";
-import { parseCliArgs, renderHelp } from "./cli_help";
-import type { Scenario } from "./types";
+import {
+  parseCliArgs,
+  parsePort,
+  parsePositiveInt,
+  parseScenario,
+  renderHelp,
+} from "./cli_help";
 
 const flags = parseCliArgs(process.argv.slice(2));
 
@@ -17,13 +22,26 @@ if (flags.wantsVersion) {
   process.exit(0);
 }
 
-const PORT = Number(process.env.PORT ?? process.env.BANKID_MOCK_PORT ?? 8585);
+let PORT: number;
+let POLLS_UNTIL_RESOLVED: number;
+let ORDER_TTL_MS: number | undefined;
+let DEFAULT_SCENARIO: ReturnType<typeof parseScenario>;
+
+try {
+  PORT = parsePort(process.env.PORT ?? process.env.BANKID_MOCK_PORT, 8585, "PORT");
+  POLLS_UNTIL_RESOLVED = parsePositiveInt(process.env.BANKID_MOCK_POLLS, 3, "BANKID_MOCK_POLLS");
+  ORDER_TTL_MS = parsePositiveInt(
+    process.env.BANKID_MOCK_ORDER_TTL_MS,
+    undefined,
+    "BANKID_MOCK_ORDER_TTL_MS",
+  );
+  DEFAULT_SCENARIO = parseScenario(process.env.BANKID_MOCK_SCENARIO, "success");
+} catch (err) {
+  console.error(err instanceof Error ? err.message : String(err));
+  process.exit(1);
+}
+
 const HOST = process.env.HOST ?? process.env.BANKID_MOCK_HOST ?? "127.0.0.1";
-const DEFAULT_SCENARIO = (process.env.BANKID_MOCK_SCENARIO ?? "success") as Scenario;
-const POLLS_UNTIL_RESOLVED = Number(process.env.BANKID_MOCK_POLLS ?? 3);
-const ORDER_TTL_MS = process.env.BANKID_MOCK_ORDER_TTL_MS
-  ? Number(process.env.BANKID_MOCK_ORDER_TTL_MS)
-  : undefined;
 const BODY_LIMIT = process.env.BANKID_MOCK_BODY_LIMIT ?? "100kb";
 
 const { app } = createMockServer({
