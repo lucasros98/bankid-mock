@@ -61,6 +61,10 @@ POST /rp/v6.0/cancel
 | `HOST` / `BANKID_MOCK_HOST` | `127.0.0.1` | Listen host |
 | `BANKID_MOCK_SCENARIO` | `success` | Default scenario for new orders |
 | `BANKID_MOCK_POLLS` | `3` | Number of `/collect` calls before resolving |
+| `BANKID_MOCK_ORDER_TTL_MS` | _unset_ | Evict orders older than this many ms (useful for long-running CI) |
+| `BANKID_MOCK_BODY_LIMIT` | `100kb` | Maximum JSON request body size |
+
+Invalid values exit with a clear error rather than crashing on `NaN`.
 
 ## Quickstart — programmatic
 
@@ -70,6 +74,8 @@ import { createMockServer } from "@lucasros98/bankid-mock";
 const { app } = createMockServer({
   defaultScenario: "success",
   pollsUntilResolved: 2,
+  orderTtlMs: 5 * 60_000, // optional: evict orders older than 5min
+  jsonBodyLimit: "100kb", // optional: cap request body size
 });
 
 app.listen(8585);
@@ -170,6 +176,12 @@ jobs:
   client should bypass `httpsAgent` when pointing at the mock.
 - No persistence — orders live in memory and are wiped when the process
   exits.
+
+## Maintained by
+
+Built and maintained by [Fiive](https://www.fiive.se/). We open-sourced
+this mock because we needed a reliable one for our own CI pipelines and
+local development.
 
 ## License
 
