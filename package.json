@@ -1,0 +1,62 @@
+{
+  "name": "@lucasros/bankid-mock",
+  "version": "0.1.0",
+  "description": "Drop-in mock server for the Swedish BankID v6 API. Runs locally with no certificates, supports configurable scenarios, animated QR, and is suitable for CI and local development.",
+  "keywords": [
+    "bankid",
+    "mock",
+    "test",
+    "swedish",
+    "authentication",
+    "v6",
+    "ci",
+    "fixture"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "bankid-mock": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.10",
+    "@types/supertest": "^6.0.2",
+    "bankid": "^3.2.1",
+    "prettier": "^3.2.4",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "author": "Lucas Rosvall <lucasrosvall@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasros98/bankid-mock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lucasros98/bankid-mock/issues"
+  },
+  "homepage": "https://github.com/lucasros98/bankid-mock#readme"
+}
